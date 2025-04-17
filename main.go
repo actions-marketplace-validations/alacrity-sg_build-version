@@ -2,13 +2,17 @@ package main
 
 import (
 	"flag"
-	"fmt"
+
+	"github.com/alacrity-sg/build-version/processor"
 )
 
 func main() {
-	modePtr := flag.String("mode", "", "Mode to run in")
-	persistencePtr := flag.Bool("persist", false, "Whether to run tool with persistence mode")
+	repoPtr := flag.String("repo-path", ".", "Local folder path to git repository")
+	tokenPtr := flag.String("token", "", "Token to use to communicate with Git APIs.")
 	flag.Parse()
-	fmt.Println("Mode:", *modePtr)
-	fmt.Println("Persistence:", *persistencePtr)
+	input := processor.ProcessorInput{
+		RepoPath: repoPtr,
+		Token:    tokenPtr,
+	}
+	processor.ProcessSemver(&input)
 }
