@@ -34,7 +34,7 @@ jobs:
         with:
           name: build-version_linux_amd64
           path: build-version
-  build-linux-arm:
+  build-linux-arm64:
     name: Build Linux (ARM)
     runs-on: ubuntu-24.04-arm
     steps:
