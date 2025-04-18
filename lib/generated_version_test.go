@@ -1,6 +1,9 @@
 package lib
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestGeneratedVersionPatch(t *testing.T) {
 	major := "1"
@@ -63,21 +66,23 @@ func TestGeneratedVersionMajor(t *testing.T) {
 }
 
 func TestGetGeneratedVersion(t *testing.T) {
-	version, err := GetGeneratedVersion("1.0.0")
+	expectedVersion := "1.0.0"
+	version, err := GetGeneratedVersion(expectedVersion)
 	if err != nil {
-		t.Log(err)
+		t.Error(err)
 		t.Fail()
 	}
-	if *version.Major != "1" {
-		t.Log("Major is not 1")
+	versionSplits := strings.Split(expectedVersion, ".")
+	if *version.Major != versionSplits[0] {
+		t.Error("Major is not matching")
 		t.Fail()
 	}
-	if *version.Minor != "0" {
-		t.Log("Minor is not 0")
+	if *version.Minor != versionSplits[1] {
+		t.Error("Minor is not matching")
 		t.Fail()
 	}
-	if *version.Patch != "0" {
-		t.Log("Patch is not 0")
+	if *version.Patch != versionSplits[2] {
+		t.Error("Patch is not matching")
 		t.Fail()
 	}
 }
