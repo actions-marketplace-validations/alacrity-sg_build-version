@@ -1,0 +1,66 @@
+name: Build Version Build Workflow
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+env:
+  GOLANG_VERSION: 1.24
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Golang
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GOLANG_VERSION }}
+      - name: Install Dependencies
+        run: |
+          cd backend-api && go mod download
+      - name: Run Tests
+        run: |
+          cd backend-api && go test .
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [validate]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Golang
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GOLANG_VERSION }}
+      - name: Install Dependencies
+        run: |
+          cd backend-api && go mod download
+      - name: Build Binary
+        run: CGO_ENABLED=0 GOOS=linux go build -o build-version .
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-version
+          path: build-version
+  build-image:
+    name: Build Image
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-version
+      - name: Docker Build
+        run: |
+          docker buildx build -t build-version .
