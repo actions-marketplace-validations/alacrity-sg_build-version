@@ -61,3 +61,23 @@ func TestGeneratedVersionMajor(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestGetGeneratedVersion(t *testing.T) {
+	version, err := GetGeneratedVersion("1.0.0")
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+	if *version.Major != "1" {
+		t.Log("Major is not 1")
+		t.Fail()
+	}
+	if *version.Minor != "0" {
+		t.Log("Minor is not 0")
+		t.Fail()
+	}
+	if *version.Patch != "0" {
+		t.Log("Patch is not 0")
+		t.Fail()
+	}
+}

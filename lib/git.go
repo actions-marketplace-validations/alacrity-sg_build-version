@@ -34,7 +34,7 @@ func GetLatestReleaseTag(repoPath string) (*string, error) {
 	if err != nil {
 		return nil, err
 	}
-	qualifiedTag := "0.0.1"
+	qualifiedTag := "0.0.0"
 	tags.ForEach(func(t *plumbing.Reference) error {
 		tagName := t.Name().Short()
 		match, _ := regexp.MatchString("^v[0-9]+\\.[0-9]+\\.[0-9]+$", tagName)
@@ -52,7 +52,7 @@ func GetLatestRCTag(repoPath string) (*string, error) {
 	if err != nil {
 		return nil, err
 	}
-	qualifiedTag := "0.0.1"
+	qualifiedTag := "0.0.0"
 	tags.ForEach(func(t *plumbing.Reference) error {
 		tagName := t.Name().Short()
 		match, _ := regexp.MatchString("^v[0-9]+\\.[0-9]+\\.[0-9]+-rc\\.\\S+$", tagName)
