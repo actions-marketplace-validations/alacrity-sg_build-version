@@ -11,4 +11,5 @@ func WriteToFile(version string, outputFilePath string) error {
 	if err != nil {
 		return err
 	}
+	return nil
 }
