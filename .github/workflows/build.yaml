@@ -92,7 +92,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${BUILD_VERSION}
+          tag_name: v${{ env.BUILD_VERSION }}
           files: |
             build-version_linux_arm64
             build-version_linux_amd64
