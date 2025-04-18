@@ -1,7 +1,6 @@
 package lib
 
 import (
-	"errors"
 	"regexp"
 
 	"github.com/go-git/go-git/v5"
@@ -35,18 +34,15 @@ func GetLatestReleaseTag(repoPath string) (*string, error) {
 	if err != nil {
 		return nil, err
 	}
-	qualifiedTag := ""
+	qualifiedTag := "0.0.0"
 	tags.ForEach(func(t *plumbing.Reference) error {
 		tagName := t.Name().Short()
 		match, _ := regexp.MatchString("^v[0-9]+\\.[0-9]+\\.[0-9]+$", tagName)
 		if match == true {
-			qualifiedTag = tagName
+			qualifiedTag = tagName[1:]
 		}
 		return nil
 	})
-	if qualifiedTag == "" {
-		return nil, errors.New("No qualified tag matching release regex found.")
-	}
 	return &qualifiedTag, nil
 }
 
@@ -56,17 +52,14 @@ func GetLatestRCTag(repoPath string) (*string, error) {
 	if err != nil {
 		return nil, err
 	}
-	qualifiedTag := ""
+	qualifiedTag := "0.0.0"
 	tags.ForEach(func(t *plumbing.Reference) error {
 		tagName := t.Name().Short()
 		match, _ := regexp.MatchString("^v[0-9]+\\.[0-9]+\\.[0-9]+-rc\\.\\S+$", tagName)
 		if match == true {
-			qualifiedTag = tagName
+			qualifiedTag = tagName[1:]
 		}
 		return nil
 	})
-	if qualifiedTag == "" {
-		return nil, errors.New("No qualified tag matching release candidate regex found.")
-	}
 	return &qualifiedTag, nil
 }
