@@ -62,7 +62,6 @@ jobs:
   create-release:
     name: Create Release
     runs-on: ubuntu-latest
-    if: github.ref_name == 'main'
     needs: [build-linux-arm64, build-linux-x86]
     steps:
       - name: Checkout code
