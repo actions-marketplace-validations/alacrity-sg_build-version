@@ -15,6 +15,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Set Committer Details
+        run: |
+          git config --global user.name "validate"
+          git config --global user.email "validate@alacrity.sg"
       - name: Setup Golang
         uses: actions/setup-go@v5
         with:
