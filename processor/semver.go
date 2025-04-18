@@ -11,13 +11,14 @@ import (
 )
 
 type ProcessorInput struct {
-	RepoPath *string
-	Token    *string
+	RepoPath       *string
+	Token          *string
+	OutputFilePath *string
 }
 
 func ProcessSemver(input *ProcessorInput) (*string, error) {
 	_, githubEnv := os.LookupEnv("GITHUB_CI")
-	if githubEnv == true {
+	if githubEnv {
 		// token := os.Getenv("GITHUB_TOKEN")
 		// repo := os.Getenv("GITHUB_REPOSITORY")
 		refName := os.Getenv("GITHUB_REF_NAME")
@@ -43,5 +44,10 @@ func ProcessSemver(input *ProcessorInput) (*string, error) {
 			return &newVersion, nil
 		}
 	}
+	_, gitlabEnv := os.LookupEnv("GITLAB_CI")
+	if gitlabEnv {
+		return nil, errors.New("Non GitHub implementation is not supported right now.")
+	}
+
 	return nil, errors.New("Non GitHub implementation is not supported right now.")
 }
