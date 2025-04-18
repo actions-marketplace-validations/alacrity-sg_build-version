@@ -43,7 +43,7 @@ func TestGetLatestReleaseTagSingle(t *testing.T) {
 	CheckIfError(err)
 	tag, err := GetLatestReleaseTag(dir)
 	CheckIfError(err)
-	if *tag != expectedTag {
+	if *tag != expectedTag[1:] {
 		t.Fail()
 	}
 }
@@ -62,7 +62,7 @@ func TestGetLatestReleaseTagMultiple(t *testing.T) {
 	CheckIfError(err)
 	tag, err := GetLatestReleaseTag(dir)
 	CheckIfError(err)
-	if *tag != expectedTag {
+	if *tag != expectedTag[1:] {
 		t.Fail()
 	}
 }
@@ -81,7 +81,7 @@ func TestGetLatestReleaseTagMultipleWithRC(t *testing.T) {
 	CheckIfError(err)
 	tag, err := GetLatestReleaseTag(dir)
 	CheckIfError(err)
-	if *tag != expectedTag {
+	if *tag != expectedTag[1:] {
 		t.Fail()
 	}
 }
@@ -96,7 +96,7 @@ func TestGetRCTagSingle(t *testing.T) {
 	CheckIfError(err)
 	tag, err := GetLatestRCTag(dir)
 	CheckIfError(err)
-	if *tag != expectedTag {
+	if *tag != expectedTag[1:] {
 		t.Fail()
 	}
 }
@@ -113,7 +113,7 @@ func TestGetRCTagMultiple(t *testing.T) {
 	CheckIfError(err)
 	tag, err := GetLatestRCTag(dir)
 	CheckIfError(err)
-	if *tag != expectedTag {
+	if *tag != expectedTag[1:] {
 		t.Fail()
 	}
 }
@@ -131,7 +131,7 @@ func TestGetRCTagMultipleWithRelease(t *testing.T) {
 	_, err = r.CreateTag("v1.0.1", commit.Hash, tagOptions)
 	tag, err := GetLatestRCTag(dir)
 	CheckIfError(err)
-	if *tag != expectedTag {
+	if *tag != expectedTag[1:] {
 		t.Fail()
 	}
 }
