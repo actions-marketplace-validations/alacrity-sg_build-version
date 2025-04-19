@@ -41,7 +41,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-version_${{ matrix.type }}_${{ matrix.arch }}
+          name: build-version
           path: build-version_${{ matrix.type }}_${{ matrix.arch }}
   create-release:
     name: Create Release
@@ -56,13 +56,13 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: "artifacts"
-          pattern: build-version_*
+          pattern: build-version
           merge_multiple: true
       - run: ls -R .
       - name: Generate Version
         id: generate-version
         run: |
-          ./artifacts/build-version_linux_amd64 -repo-path=. -output-file=build-version.env
+          ./artifacts/build-version/build-version_linux_amd64 -repo-path=. -output-file=build-version.env
           cat build-version.env >> "$GITHUB_OUTPUT"
           cat build-version.env >> "$GITHUB_ENV"
       - name: Release
@@ -70,6 +70,6 @@ jobs:
         with:
           tag_name: v${{ env.BUILD_VERSION }}
           files: |
-            artifacts/build-version_linux_arm64
-            artifacts/build-version_linux_amd64
+            artifacts/build-version/build-version_linux_arm64
+            artifacts/build-version/build-version_linux_amd64
           make_latest: ${{ github.ref_name == 'main' && 'true' || 'false' }}
