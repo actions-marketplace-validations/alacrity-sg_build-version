@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/alacrity-sg/build-version/lib"
-	bv_test "github.com/alacrity-sg/build-version/test"
+	"github.com/alacrity-sg/build-version/src/bvtest"
+	"github.com/alacrity-sg/build-version/src/lib"
 	"github.com/go-git/go-git/v5"
 )
 
 func TestProcessSemverMainWithTagDefaults(t *testing.T) {
 	t.Setenv("GITHUB_ACTIONS", "true")
 	t.Setenv("GITHUB_REF_NAME", "main")
-	dir, r, _, commit := bv_test.SetupRepo("main", t)
+	dir, r, _, commit := bvtest.SetupRepo("main", t)
 	tagOptions := &git.CreateTagOptions{
 		Message: "Commit",
 	}
@@ -35,7 +35,7 @@ func TestProcessSemverNonMainWithDefaults(t *testing.T) {
 	t.Setenv("GITHUB_ACTIONS", "true")
 	t.Setenv("GITHUB_REF_NAME", "feature/123")
 	t.Setenv("GITHUB_RUN_ID", "abc")
-	dir, _, _, _ := bv_test.SetupRepo("main", t)
+	dir, _, _, _ := bvtest.SetupRepo("main", t)
 	version, err := ProcessSemver(&ProcessorInput{
 		RepoPath: dir,
 	})
@@ -51,7 +51,7 @@ func TestProcessSemverNonMainWithExistingTagDefaults(t *testing.T) {
 	t.Setenv("GITHUB_ACTIONS", "true")
 	t.Setenv("GITHUB_REF_NAME", "feature/123")
 	t.Setenv("GITHUB_RUN_ID", "abc")
-	dir, r, _, commit := bv_test.SetupRepo("main", t)
+	dir, r, _, commit := bvtest.SetupRepo("main", t)
 	tagOptions := &git.CreateTagOptions{
 		Message: "Commit",
 	}
@@ -72,7 +72,7 @@ func TestProcessSemverNonMainWithExistingTagPatch(t *testing.T) {
 	t.Setenv("GITHUB_ACTIONS", "true")
 	t.Setenv("GITHUB_REF_NAME", "feature/123")
 	t.Setenv("GITHUB_RUN_ID", "abc")
-	dir, r, _, commit := bv_test.SetupRepo("main", t)
+	dir, r, _, commit := bvtest.SetupRepo("main", t)
 	tagOptions := &git.CreateTagOptions{
 		Message: "Commit",
 	}
@@ -95,7 +95,7 @@ func TestProcessSemverNonMainWithExistingTagMinor(t *testing.T) {
 	t.Setenv("GITHUB_ACTIONS", "true")
 	t.Setenv("GITHUB_REF_NAME", "feature/123")
 	t.Setenv("GITHUB_RUN_ID", "abc")
-	dir, r, _, commit := bv_test.SetupRepo("main", t)
+	dir, r, _, commit := bvtest.SetupRepo("main", t)
 	tagOptions := &git.CreateTagOptions{
 		Message: "Commit",
 	}
@@ -118,7 +118,7 @@ func TestProcessSemverNonMainWithExistingTagMajor(t *testing.T) {
 	t.Setenv("GITHUB_ACTIONS", "true")
 	t.Setenv("GITHUB_REF_NAME", "feature/123")
 	t.Setenv("GITHUB_RUN_ID", "abc")
-	dir, r, _, commit := bv_test.SetupRepo("main", t)
+	dir, r, _, commit := bvtest.SetupRepo("main", t)
 	tagOptions := &git.CreateTagOptions{
 		Message: "Commit",
 	}
