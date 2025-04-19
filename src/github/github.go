@@ -1,4 +1,4 @@
-package lib
+package github
 
 import (
 	"context"
@@ -33,7 +33,7 @@ func GetLabelsFromPullRequest(repo string, prId *int64, token string) ([]string,
 	return labels, nil
 }
 
-func GetPullRequestIdWithCommitHash(repo string, commitSha *string, token string) (*int64, error) {
+func GetPullRequestLabelsWithCommitHash(repo string, commitSha string, token string) ([]*github.Label, error) {
 	client, err := GetClient(token)
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func GetPullRequestIdWithCommitHash(repo string, commitSha *string, token string
 	repoSplits := strings.Split(repo, "/")
 	repoOwner := repoSplits[0]
 	repoName := repoSplits[1]
-	pr, _, err := client.PullRequests.ListPullRequestsWithCommit(context.Background(), repoOwner, repoName, *commitSha, &github.ListOptions{})
+	pr, _, err := client.PullRequests.ListPullRequestsWithCommit(context.Background(), repoOwner, repoName, commitSha, &github.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func GetPullRequestIdWithCommitHash(repo string, commitSha *string, token string
 	if len(pr) == 0 {
 		return nil, errors.New("No PR found matching commit found")
 	}
-	return pr[0].ID, nil
+	return pr[0].Labels, nil
 }
 
 func ValidatePermissions(repo string, token string) error {

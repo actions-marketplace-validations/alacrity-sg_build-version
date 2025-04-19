@@ -9,6 +9,7 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/alacrity-sg/build-version/src/generator"
 	"github.com/alacrity-sg/build-version/src/git"
+	"github.com/alacrity-sg/build-version/src/github"
 	"github.com/alacrity-sg/build-version/src/lib"
 )
 
@@ -66,14 +67,43 @@ func (input *ProcessorInput) ProcessSemver() (*string, error) {
 
 func (input *ProcessorInput) parseIncrementType() (*string, error) {
 	defaultIncrement := "patch"
-
 	if input.IncrementType != "" {
-		// Check increment type.
 		lowercaseIncrementType := strings.ToLower(input.IncrementType)
 		if lowercaseIncrementType == "major" || lowercaseIncrementType == "minor" || lowercaseIncrementType == "patch" {
-			return &lowercaseIncrementType, nil
+			defaultIncrement = lowercaseIncrementType
 		} else {
 			return nil, errors.New(fmt.Sprintf("Expected IncrementType to be 'major', 'minor' or 'patch' but received '%s'", lowercaseIncrementType))
+		}
+	}
+	if input.OfflineMode {
+		return &defaultIncrement, nil
+	}
+
+	refName := os.Getenv("GITHUB_REF_NAME")
+	if refName != "main" {
+		return &defaultIncrement, nil
+	}
+
+	repo := os.Getenv("GITHUB_REPOSITORY")
+	commit, err := git.GetLastCommit(input.RepoPath)
+	if err != nil {
+		return nil, err
+	}
+	labels, err := github.GetPullRequestLabelsWithCommitHash(repo, *commit, input.Token)
+	if err != nil {
+		return nil, err
+	}
+	for _, label := range labels {
+		lowerLabel := strings.ToLower(*label.Name)
+		if lowerLabel == "major" {
+			defaultIncrement = "major"
+			break
+		}
+		if lowerLabel == "minor" && defaultIncrement == "patch" {
+			defaultIncrement = "minor"
+		}
+		if lowerLabel == "patch" && defaultIncrement == "patch" {
+			defaultIncrement = "patch"
 		}
 	}
 	return &defaultIncrement, nil
