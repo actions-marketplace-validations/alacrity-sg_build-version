@@ -55,7 +55,7 @@ jobs:
           fetch-tags: true
       - uses: actions/download-artifact@v4
         with:
-          name: build-version_*
+          pattern: build-version_*
           merge_multiple: true
       - run: ls -R .
       - name: Generate Version
