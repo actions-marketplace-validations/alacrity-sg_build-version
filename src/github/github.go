@@ -51,3 +51,28 @@ func GetPullRequestIdWithCommitHash(repo string, commitSha *string, token string
 	}
 	return pr[0].ID, nil
 }
+
+func ValidatePermissions(repo string, token string) error {
+	client, err := GetClient(token)
+	if err != nil {
+		return err
+	}
+	repoSplits := strings.Split(repo, "/")
+	_, _, err = client.PullRequests.List(context.Background(), repoSplits[0], repoSplits[1], &github.PullRequestListOptions{
+		ListOptions: github.ListOptions{
+			PerPage: 1,
+		},
+	})
+	if err != nil {
+		return errors.New("Unable to access PullRequests. Please ensure you have assigned 'pull-requests: read; permission to the token")
+	}
+	_, _, err = client.Repositories.ListCommits(context.Background(), repoSplits[0], repoSplits[1], &github.CommitsListOptions{
+		ListOptions: github.ListOptions{
+			PerPage: 1,
+		},
+	})
+	if err != nil {
+		return errors.New("Unable to access Commits. Please ensure you have assigned 'contents: read; permission to the token")
+	}
+	return nil
+}

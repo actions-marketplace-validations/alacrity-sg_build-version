@@ -22,7 +22,7 @@ func main() {
 		IncrementType:  *incrementTypePtr,
 		OfflineMode:    *offlineModePtr,
 	}
-	version, err := processor.ProcessSemver(&input)
+	version, err := input.ProcessSemver()
 	if err != nil {
 		panic(err)
 	}

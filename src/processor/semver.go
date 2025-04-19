@@ -2,7 +2,9 @@ package processor
 
 import (
 	"errors"
+	"fmt"
 	"os"
+	"strings"
 
 	"github.com/Masterminds/semver"
 	"github.com/alacrity-sg/build-version/src/generator"
@@ -18,7 +20,7 @@ type ProcessorInput struct {
 	OfflineMode    bool
 }
 
-func ProcessSemver(input *ProcessorInput) (*string, error) {
+func (input *ProcessorInput) ProcessSemver() (*string, error) {
 	_, githubEnv := os.LookupEnv("GITHUB_ACTIONS")
 	if githubEnv {
 		// token := os.Getenv("GITHUB_TOKEN")
@@ -40,7 +42,7 @@ func ProcessSemver(input *ProcessorInput) (*string, error) {
 			lib.CheckIfError(err)
 			generatedVersion, err := generator.GetGeneratedVersion(*releaseTag)
 			lib.CheckIfError(err)
-			incrementType, err := lib.GetIncrementType(input.IncrementType, input.OfflineMode)
+			incrementType, err := input.parseIncrementType()
 			lib.CheckIfError(err)
 			if *incrementType == "major" {
 				err = generatedVersion.IncrementMajor()
@@ -60,5 +62,19 @@ func ProcessSemver(input *ProcessorInput) (*string, error) {
 	} else {
 		return nil, errors.New("Non GitHub implementation is not supported right now.")
 	}
+}
 
+func (input *ProcessorInput) parseIncrementType() (*string, error) {
+	defaultIncrement := "patch"
+
+	if input.IncrementType != "" {
+		// Check increment type.
+		lowercaseIncrementType := strings.ToLower(input.IncrementType)
+		if lowercaseIncrementType == "major" || lowercaseIncrementType == "minor" || lowercaseIncrementType == "patch" {
+			return &lowercaseIncrementType, nil
+		} else {
+			return nil, errors.New(fmt.Sprintf("Expected IncrementType to be 'major', 'minor' or 'patch' but received '%s'", lowercaseIncrementType))
+		}
+	}
+	return &defaultIncrement, nil
 }
