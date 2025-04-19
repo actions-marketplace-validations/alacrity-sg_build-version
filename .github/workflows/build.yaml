@@ -62,6 +62,7 @@ jobs:
       - name: Generate Version
         id: generate-version
         run: |
+          chmod +x ./artifacts/build-version_linux_amd64/build-version_linux_amd64
           ./artifacts/build-version_linux_amd64/build-version_linux_amd64 -repo-path=. -output-file=build-version.env
           cat build-version.env >> "$GITHUB_OUTPUT"
           cat build-version.env >> "$GITHUB_ENV"
