@@ -37,7 +37,7 @@ jobs:
       - name: Run Tests
         run: go test -v ./...
       - name: Build Binary
-        run: CGO_ENABLED=0 GOOS=${{ matrix.type }} GOARCH ${{ matrix.arm64 }} go build -o build-version_${{ matrix.type }}_${{ matrix.arch }} .
+        run: CGO_ENABLED=0 GOOS=${{ matrix.type }} GOARCH=${{ matrix.arm64 }} go build -o build-version_${{ matrix.type }}_${{ matrix.arch }} .
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
