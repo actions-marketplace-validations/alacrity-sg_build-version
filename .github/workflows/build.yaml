@@ -53,16 +53,6 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
-      - name: Download Artifact
-        uses: actions/download-artifact@v4
-        with:
-          pattern:
-      - name: Generate Version
-        id: generate-version
-        run: |
-          ./build-version -repo-path=. -output-file=build-version.env
-          cat build-version.env >> "$GITHUB_OUTPUT"
-          cat build-version.env >> "$GITHUB_ENV"
       - uses: actions/download-artifact@v4
         with:
           name: build-version_linux_arm64
@@ -71,6 +61,12 @@ jobs:
           name: build-version_*
           merge_multiple: true
       - run: ls -R .
+      - name: Generate Version
+        id: generate-version
+        run: |
+          ./build-version -repo-path=. -output-file=build-version.env
+          cat build-version.env >> "$GITHUB_OUTPUT"
+          cat build-version.env >> "$GITHUB_ENV"
       # - name: Release
       #   uses: softprops/action-gh-release@v2
       #   with:
