@@ -74,8 +74,8 @@ jobs:
           tag_name: v${{ env.BUILD_VERSION }}
           files: artifacts/*
           make_latest: ${{ github.ref_name == 'main' && 'true' || 'false' }}
-      # - name: Publish Action
-      #   if: ${{ github.ref_name == 'main' }}
-      #   uses: actions/publish-action@8a4b4f687b72f481b8a241ef71f38857239698fc
-      #   with:
-      #     source-tag: v${{ env.BUILD_VERSION }}
+      - name: Publish Action
+        if: ${{ github.ref_name == 'main' }}
+        uses: actions/publish-action@8a4b4f687b72f481b8a241ef71f38857239698fc
+        with:
+          source-tag: v${{ env.BUILD_VERSION }}
