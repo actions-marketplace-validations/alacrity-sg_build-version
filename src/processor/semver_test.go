@@ -21,7 +21,8 @@ func TestProcessSemverMainWithTagDefaults(t *testing.T) {
 	_, err = r.CreateTag("v1.0.1-rc.123", commit.Hash, tagOptions)
 	lib.CheckIfError(err)
 	input := ProcessorInput{
-		RepoPath: dir,
+		RepoPath:    dir,
+		OfflineMode: true,
 	}
 	version, err := input.ProcessSemver()
 	lib.CheckIfError(err)
@@ -38,7 +39,8 @@ func TestProcessSemverNonMainWithDefaults(t *testing.T) {
 	t.Setenv("GITHUB_RUN_ID", "abc")
 	dir, _, _, _ := bvtest.SetupRepo("main", t)
 	input := ProcessorInput{
-		RepoPath: dir,
+		RepoPath:    dir,
+		OfflineMode: true,
 	}
 	version, err := input.ProcessSemver()
 	lib.CheckIfError(err)
@@ -60,7 +62,8 @@ func TestProcessSemverNonMainWithExistingTagDefaults(t *testing.T) {
 	_, err := r.CreateTag("v1.0.0", commit.Hash, tagOptions)
 	lib.CheckIfError(err)
 	input := ProcessorInput{
-		RepoPath: dir,
+		RepoPath:    dir,
+		OfflineMode: true,
 	}
 	version, err := input.ProcessSemver()
 	lib.CheckIfError(err)
@@ -84,7 +87,7 @@ func TestProcessSemverNonMainWithExistingTagPatch(t *testing.T) {
 	input := ProcessorInput{
 		RepoPath:      dir,
 		IncrementType: "patch",
-		OfflineMode:   false,
+		OfflineMode:   true,
 	}
 	version, err := input.ProcessSemver()
 	lib.CheckIfError(err)
@@ -108,7 +111,7 @@ func TestProcessSemverNonMainWithExistingTagMinor(t *testing.T) {
 	input := ProcessorInput{
 		RepoPath:      dir,
 		IncrementType: "minor",
-		OfflineMode:   false,
+		OfflineMode:   true,
 	}
 	version, err := input.ProcessSemver()
 	lib.CheckIfError(err)
@@ -132,7 +135,7 @@ func TestProcessSemverNonMainWithExistingTagMajor(t *testing.T) {
 	input := ProcessorInput{
 		RepoPath:      dir,
 		IncrementType: "major",
-		OfflineMode:   false,
+		OfflineMode:   true,
 	}
 	version, err := input.ProcessSemver()
 	lib.CheckIfError(err)
@@ -145,7 +148,7 @@ func TestProcessSemverNonMainWithExistingTagMajor(t *testing.T) {
 
 func TestGetIncrementTypeEmptyOffline(t *testing.T) {
 	input := ProcessorInput{
-		OfflineMode:   false,
+		OfflineMode:   true,
 		IncrementType: "",
 	}
 	result, err := input.parseIncrementType()
@@ -161,7 +164,7 @@ func TestGetIncrementTypePatchOffline(t *testing.T) {
 	incrementTypes := []string{"Patch", "patch"}
 	for _, incrementType := range incrementTypes {
 		input := ProcessorInput{
-			OfflineMode:   false,
+			OfflineMode:   true,
 			IncrementType: incrementType,
 		}
 		result, err := input.parseIncrementType()
@@ -178,7 +181,7 @@ func TestGetIncrementTypeMinorOffline(t *testing.T) {
 	incrementTypes := []string{"Minor", "minor"}
 	for _, incrementType := range incrementTypes {
 		input := ProcessorInput{
-			OfflineMode:   false,
+			OfflineMode:   true,
 			IncrementType: incrementType,
 		}
 		result, err := input.parseIncrementType()
@@ -195,7 +198,7 @@ func TestGetIncrementTypeMajorOffline(t *testing.T) {
 	incrementTypes := []string{"Major", "major"}
 	for _, incrementType := range incrementTypes {
 		input := ProcessorInput{
-			OfflineMode:   false,
+			OfflineMode:   true,
 			IncrementType: incrementType,
 		}
 		result, err := input.parseIncrementType()
@@ -212,7 +215,7 @@ func TestGetIncrementTypeInvalidValueffline(t *testing.T) {
 	incrementTypes := []string{"asdasda"}
 	for _, incrementType := range incrementTypes {
 		input := ProcessorInput{
-			OfflineMode:   false,
+			OfflineMode:   true,
 			IncrementType: incrementType,
 		}
 		result, err := input.parseIncrementType()
