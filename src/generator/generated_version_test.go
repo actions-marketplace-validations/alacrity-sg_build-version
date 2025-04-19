@@ -10,17 +10,17 @@ func TestGeneratedVersionPatch(t *testing.T) {
 	minor := "0"
 	patch := "0"
 	version := &GeneratedVersion{
-		Major: &major,
-		Minor: &minor,
-		Patch: &patch,
+		Major: major,
+		Minor: minor,
+		Patch: patch,
 	}
 	err := version.IncrementPatch()
 	if err != nil {
 		t.Log(err)
 		t.Fail()
 	}
-	if *version.Patch != "1" {
-		t.Log(*version.Patch)
+	if version.Patch != "1" {
+		t.Log(version.Patch)
 		t.Fail()
 	}
 }
@@ -30,17 +30,17 @@ func TestGeneratedVersionMinor(t *testing.T) {
 	minor := "2"
 	patch := "3"
 	version := &GeneratedVersion{
-		Major: &major,
-		Minor: &minor,
-		Patch: &patch,
+		Major: major,
+		Minor: minor,
+		Patch: patch,
 	}
 	err := version.IncrementMinor()
 	if err != nil {
 		t.Log(err)
 		t.Fail()
 	}
-	if *version.Minor != "3" {
-		t.Log(*version.Minor)
+	if version.Minor != "3" {
+		t.Log(version.Minor)
 		t.Fail()
 	}
 }
@@ -50,17 +50,17 @@ func TestGeneratedVersionMajor(t *testing.T) {
 	minor := "2"
 	patch := "3"
 	version := &GeneratedVersion{
-		Major: &major,
-		Minor: &minor,
-		Patch: &patch,
+		Major: major,
+		Minor: minor,
+		Patch: patch,
 	}
 	err := version.IncrementMajor()
 	if err != nil {
 		t.Log(err)
 		t.Fail()
 	}
-	if *version.Major != "2" {
-		t.Log(*version.Major)
+	if version.Major != "2" {
+		t.Log(version.Major)
 		t.Fail()
 	}
 }
@@ -73,15 +73,15 @@ func TestGetGeneratedVersion(t *testing.T) {
 		t.Fail()
 	}
 	versionSplits := strings.Split(expectedVersion, ".")
-	if *version.Major != versionSplits[0] {
+	if version.Major != versionSplits[0] {
 		t.Error("Major is not matching")
 		t.Fail()
 	}
-	if *version.Minor != versionSplits[1] {
+	if version.Minor != versionSplits[1] {
 		t.Error("Minor is not matching")
 		t.Fail()
 	}
-	if *version.Patch != versionSplits[2] {
+	if version.Patch != versionSplits[2] {
 		t.Error("Patch is not matching")
 		t.Fail()
 	}
