@@ -1,41 +1,14 @@
 package lib
 
 import (
-	"os"
-	"path/filepath"
 	"testing"
-	"time"
 
+	bv_test "github.com/alacrity-sg/build-version/test"
 	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/config"
-	"github.com/go-git/go-git/v5/plumbing/object"
 )
 
-func setupRepo(branch string, t *testing.T) (string, *git.Repository, *git.Worktree, *object.Commit) {
-	dir := t.TempDir()
-	r, err := git.PlainInit(dir, false)
-	err = r.CreateBranch(&config.Branch{Name: branch})
-	w, err := r.Worktree()
-	CheckIfError(err)
-	fileName := filepath.Join(dir, "test.txt")
-	err = os.WriteFile(fileName, []byte("test"), 0666)
-
-	CheckIfError(err)
-	_, err = w.Add("test.txt")
-	CheckIfError(err)
-	commit, err := w.Commit("base", &git.CommitOptions{
-		Author: &object.Signature{
-			Name:  "Test",
-			Email: "test@test.com",
-			When:  time.Now(),
-		},
-	})
-	obj, err := r.CommitObject(commit)
-	return dir, r, w, obj
-}
-
 func TestGetLatestReleaseTagSingle(t *testing.T) {
-	dir, r, _, commit := setupRepo("main", t)
+	dir, r, _, commit := bv_test.SetupRepo("main", t)
 	expectedTag := "v1.0.0"
 	_, err := r.CreateTag(expectedTag, commit.Hash, &git.CreateTagOptions{
 		Message: expectedTag,
@@ -49,7 +22,7 @@ func TestGetLatestReleaseTagSingle(t *testing.T) {
 }
 
 func TestGetLatestReleaseTagMultiple(t *testing.T) {
-	dir, r, _, commit := setupRepo("main", t)
+	dir, r, _, commit := bv_test.SetupRepo("main", t)
 	unexpectedTag := "v1.0.0"
 	_, err := r.CreateTag(unexpectedTag, commit.Hash, &git.CreateTagOptions{
 		Message: unexpectedTag,
@@ -68,7 +41,7 @@ func TestGetLatestReleaseTagMultiple(t *testing.T) {
 }
 
 func TestGetLatestReleaseTagMultipleWithRC(t *testing.T) {
-	dir, r, _, commit := setupRepo("main", t)
+	dir, r, _, commit := bv_test.SetupRepo("main", t)
 	tagOptions := &git.CreateTagOptions{
 		Message: "Commit",
 	}
@@ -87,7 +60,7 @@ func TestGetLatestReleaseTagMultipleWithRC(t *testing.T) {
 }
 
 func TestGetRCTagSingle(t *testing.T) {
-	dir, r, _, commit := setupRepo("main", t)
+	dir, r, _, commit := bv_test.SetupRepo("main", t)
 	tagOptions := &git.CreateTagOptions{
 		Message: "Commit",
 	}
@@ -102,7 +75,7 @@ func TestGetRCTagSingle(t *testing.T) {
 }
 
 func TestGetRCTagMultiple(t *testing.T) {
-	dir, r, _, commit := setupRepo("main", t)
+	dir, r, _, commit := bv_test.SetupRepo("main", t)
 	tagOptions := &git.CreateTagOptions{
 		Message: "Commit",
 	}
@@ -119,7 +92,7 @@ func TestGetRCTagMultiple(t *testing.T) {
 }
 
 func TestGetRCTagMultipleWithRelease(t *testing.T) {
-	dir, r, _, commit := setupRepo("main", t)
+	dir, r, _, commit := bv_test.SetupRepo("main", t)
 	tagOptions := &git.CreateTagOptions{
 		Message: "Commit",
 	}
