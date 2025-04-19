@@ -61,14 +61,14 @@ jobs:
       - name: Generate Version
         id: generate-version
         run: |
-          ./build-version -repo-path=. -output-file=build-version.env
+          ./build-version_linux_amd64 -repo-path=. -output-file=build-version.env
           cat build-version.env >> "$GITHUB_OUTPUT"
           cat build-version.env >> "$GITHUB_ENV"
-      # - name: Release
-      #   uses: softprops/action-gh-release@v2
-      #   with:
-      #     tag_name: v${{ env.BUILD_VERSION }}
-      #     files: |
-      #       build-version_linux_arm64
-      #       build-version_linux_amd64
-      #     make_latest: ${{ github.ref_name == 'main' && 'true' || 'false' }}
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.BUILD_VERSION }}
+          files: |
+            build-version_linux_arm64
+            build-version_linux_amd64
+          make_latest: ${{ github.ref_name == 'main' && 'true' || 'false' }}
