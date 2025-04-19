@@ -16,7 +16,7 @@ func GetClient(token string) (*github.Client, error) {
 	return client, nil
 }
 
-func GetLabelsFromPullRequest(repo string, prId *int64, token string) ([]string, error) {
+func GetLabelsFromPullRequest(repo string, prId int, token string) ([]string, error) {
 	client, err := GetClient(token)
 	if err != nil {
 		return nil, err
@@ -24,11 +24,11 @@ func GetLabelsFromPullRequest(repo string, prId *int64, token string) ([]string,
 	repoSplits := strings.Split(repo, "/")
 	repoOwner := repoSplits[0]
 	repoName := repoSplits[1]
-	pr, _, err := client.PullRequests.Get(context.Background(), repoOwner, repoName, int(*prId))
+	pr, _, err := client.PullRequests.Get(context.Background(), repoOwner, repoName, prId)
 	githubLabels := pr.Labels
 	var labels []string
 	for _, value := range githubLabels {
-		labels = append(labels, value.GetName())
+		labels = append(labels, strings.ToLower(value.GetName()))
 	}
 	return labels, nil
 }

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/Masterminds/semver"
@@ -79,31 +80,30 @@ func (input *ProcessorInput) parseIncrementType() (*string, error) {
 		return &defaultIncrement, nil
 	}
 
+	repo := os.Getenv("GITHUB_REPOSITORY")
 	refName := os.Getenv("GITHUB_REF_NAME")
-	if refName != "main" {
+	refNameSplits := strings.Split(refName, "/")
+	if len(refNameSplits) != 2 {
 		return &defaultIncrement, nil
 	}
-
-	repo := os.Getenv("GITHUB_REPOSITORY")
-	commit, err := git.GetLastCommit(input.RepoPath)
+	prId, err := strconv.Atoi(refNameSplits[0])
 	if err != nil {
-		return nil, err
+		return &defaultIncrement, nil
 	}
-	labels, err := github.GetPullRequestLabelsWithCommitHash(repo, *commit, input.Token)
+	labels, err := github.GetLabelsFromPullRequest(repo, prId, input.Token)
 	if err != nil {
 		return nil, err
 	}
 	for _, label := range labels {
-		lowerLabel := strings.ToLower(*label.Name)
-		if lowerLabel == "major" {
-			defaultIncrement = "major"
+		if label == "major" {
+			defaultIncrement = label
 			break
 		}
-		if lowerLabel == "minor" && defaultIncrement == "patch" {
-			defaultIncrement = "minor"
+		if label == "minor" && defaultIncrement == "patch" {
+			defaultIncrement = label
 		}
-		if lowerLabel == "patch" && defaultIncrement == "patch" {
-			defaultIncrement = "patch"
+		if label == "patch" && defaultIncrement == "patch" {
+			defaultIncrement = label
 		}
 	}
 	return &defaultIncrement, nil
