@@ -56,7 +56,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: "artifacts"
-          pattern: build-version-*
+          pattern: build-version_*
           merge_multiple: true
       - run: ls -R .
       - name: Generate Version
