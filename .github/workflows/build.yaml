@@ -65,7 +65,7 @@ jobs:
         id: generate-version
         run: |
           chmod +x ./artifacts/*
-          ./artifacts/build-version_linux_amd64 -repo-path=. -output-file=build-version.env
+          ./artifacts/build-version_linux_amd64 -repo-path=. -output-file=build-version.env -token="${{ secrets.GITHUB_TOKEN }}"
           cat build-version.env >> "$GITHUB_OUTPUT"
           cat build-version.env >> "$GITHUB_ENV"
       - name: Release
