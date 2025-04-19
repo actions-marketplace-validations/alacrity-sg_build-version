@@ -1,0 +1,49 @@
+name: Generate Build Version
+description: Generates unique build-version number for builds
+inputs:
+  repo-path:
+    description: Path to the repository
+    required: false
+    default: ./
+  increment-type:
+    description: Set increment type as either 'major', 'minor' or 'patch'. Defaults to 'patch'
+    required: false
+    default: patch
+  checkout:
+    description: Checkout the repository before generating the build version
+    required: false
+    default: "true"
+  arch:
+    description: Architecture to use for build. Defaults to amd64
+    required: false
+    default: amd64
+outputs:
+  BUILD_VERSION:
+    description: "Generated build version number"
+    value: ${{ steps.generate.outputs.BUILD_VERSION }}
+  BUILD_VERSION_V:
+    description: "Generated build version number with v as prefix"
+    value: v${{ steps.generate.outputs.BUILD_VERSION }}
+runs:
+  using: composite
+  steps:
+    - name: Checkout
+      if: ${{ inputs.checkout == 'true' }}
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        fetch-tags: true
+    - name: Download Build Version
+      run: |
+        curl -Lo build-version \
+        $(curl -s https://api.github.com/repos/alacrity-sg/build-version/releases/latest \
+        | jq -r '.assets[] | select (.name | contains ("build-version_linux_${{ inputs.arch }}")) | .browser_download_url')
+        chmod +x build-version
+      shell: bash
+    - name: Generate Build Version
+      id: generate
+      run: |
+        ./build-version -repo-path=${{ inputs.repo-path }} -increment-type=${{ inputs.increment-type }}
+        cat build-version.env >> "$GITHUB_OUTPUT"
+        cat build-version.env >> "$GITHUB_ENV"
+      shell: bash

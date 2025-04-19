@@ -4,8 +4,8 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/alacrity-sg/build-version/lib"
-	"github.com/alacrity-sg/build-version/processor"
+	"github.com/alacrity-sg/build-version/src/file"
+	"github.com/alacrity-sg/build-version/src/processor"
 )
 
 func main() {
@@ -26,7 +26,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	err = lib.WriteToFile(*version, input.OutputFilePath)
+	err = file.WriteToFile(*version, input.OutputFilePath)
 	if err != nil {
 		panic(err)
 	}

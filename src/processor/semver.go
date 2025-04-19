@@ -5,7 +5,9 @@ import (
 	"os"
 
 	"github.com/Masterminds/semver"
-	"github.com/alacrity-sg/build-version/lib"
+	"github.com/alacrity-sg/build-version/src/generator"
+	"github.com/alacrity-sg/build-version/src/git"
+	"github.com/alacrity-sg/build-version/src/lib"
 )
 
 type ProcessorInput struct {
@@ -25,18 +27,18 @@ func ProcessSemver(input *ProcessorInput) (*string, error) {
 		jobRunId := os.Getenv("GITHUB_RUN_ID")
 		if refName == "main" {
 			// Process RC to become release
-			rcTag, err := lib.GetLatestRCTag(input.RepoPath)
+			rcTag, err := git.GetLatestRCTag(input.RepoPath)
 			lib.CheckIfError(err)
-			generatedVersion, err := lib.GetGeneratedVersion(*rcTag)
+			generatedVersion, err := generator.GetGeneratedVersion(*rcTag)
 			lib.CheckIfError(err)
 			finalVersion := generatedVersion.BuildReleaseVersion()
 			_, err = semver.NewVersion(finalVersion)
 			lib.CheckIfError(err)
 			return &finalVersion, nil
 		} else {
-			releaseTag, err := lib.GetLatestReleaseTag(input.RepoPath)
+			releaseTag, err := git.GetLatestReleaseTag(input.RepoPath)
 			lib.CheckIfError(err)
-			generatedVersion, err := lib.GetGeneratedVersion(*releaseTag)
+			generatedVersion, err := generator.GetGeneratedVersion(*releaseTag)
 			lib.CheckIfError(err)
 			incrementType, err := lib.GetIncrementType(input.IncrementType, input.OfflineMode)
 			lib.CheckIfError(err)

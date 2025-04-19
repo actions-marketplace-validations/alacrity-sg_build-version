@@ -8,6 +8,9 @@ on:
       - main
 env:
   GOLANG_VERSION: 1.24
+permissions:
+  contents: write
+  pull-requests: read
 jobs:
   build-binaries:
     strategy:
@@ -57,7 +60,7 @@ jobs:
         with:
           path: "artifacts"
           pattern: build-version_*
-          merge_multiple: true
+          merge-multiple: true
       - run: ls -R .
       - name: Generate Version
         id: generate-version
@@ -74,3 +77,8 @@ jobs:
             artifacts/build-version_linux_arm64/build-version_linux_arm64
             artifacts/build-version_linux_amd64/build-version_linux_amd64
           make_latest: ${{ github.ref_name == 'main' && 'true' || 'false' }}
+      # - name: Publish Action
+      #   if: ${{ github.ref_name == 'main' }}
+      #   uses: actions/publish-action@8a4b4f687b72f481b8a241ef71f38857239698fc
+      #   with:
+      #     source-tag: v${{ env.BUILD_VERSION }}

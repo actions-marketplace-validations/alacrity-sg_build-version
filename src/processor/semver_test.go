@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/alacrity-sg/build-version/lib"
+	"github.com/alacrity-sg/build-version/src/lib"
 	bv_test "github.com/alacrity-sg/build-version/test"
 	"github.com/go-git/go-git/v5"
 )
