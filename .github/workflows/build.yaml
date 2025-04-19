@@ -9,9 +9,18 @@ on:
 env:
   GOLANG_VERSION: 1.24
 jobs:
-  build-linux-x86:
-    name: Build Linux (x86)
-    runs-on: ubuntu-24.04
+  build-binaries:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            type: linux
+            arch: amd64
+          - os: ubuntu-24.04-arm
+            type: linux
+            arch: arm64
+    name: Build Binaries
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -28,71 +37,40 @@ jobs:
       - name: Run Tests
         run: go test -v ./...
       - name: Build Binary
-        run: CGO_ENABLED=0 GOOS=linux go build -o build-version .
+        run: CGO_ENABLED=0 GOOS=${{ matrix.type }} GOARCH=${{ matrix.arm64 }} go build -o build-version_${{ matrix.type }}_${{ matrix.arch }} .
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-version_linux_amd64
-          path: build-version
-  build-linux-arm64:
-    name: Build Linux (ARM)
-    runs-on: ubuntu-24.04-arm
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set Committer Details
-        run: |
-          git config --global user.name "validate"
-          git config --global user.email "validate@alacrity.sg"
-      - name: Setup Golang
-        uses: actions/setup-go@v5
-        with:
-          go-version: ${{ env.GOLANG_VERSION }}
-      - name: Install Dependencies
-        run: go mod download
-      - name: Run Tests
-        run: go test -v ./...
-      - name: Build Binary
-        run: CGO_ENABLED=0 GOOS=linux go build -o build-version .
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-version_linux_arm64
-          path: build-version
+          name: build-version_${{ matrix.type }}_${{ matrix.arch }}
+          path: build-version_${{ matrix.type }}_${{ matrix.arch }}
   create-release:
     name: Create Release
     runs-on: ubuntu-latest
-    needs: [build-linux-arm64, build-linux-x86]
+    needs: [build-binaries]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           fetch-tags: true
-      - name: Setup Golang
-        uses: actions/setup-go@v5
+      - uses: actions/download-artifact@v4
         with:
-          go-version: ${{ env.GOLANG_VERSION }}
-      - name: Install Dependencies
-        run: go mod download
-      - name: Build Binary
-        run: CGO_ENABLED=0 GOOS=linux go build -o build-version .
+          path: "artifacts"
+          pattern: build-version_*
+          merge_multiple: true
+      - run: ls -R .
       - name: Generate Version
         id: generate-version
         run: |
-          ./build-version -repo-path=. -output-file=build-version.env
+          chmod +x ./artifacts/build-version_linux_amd64/build-version_linux_amd64
+          ./artifacts/build-version_linux_amd64/build-version_linux_amd64 -repo-path=. -output-file=build-version.env
           cat build-version.env >> "$GITHUB_OUTPUT"
           cat build-version.env >> "$GITHUB_ENV"
-      - uses: actions/download-artifact@v4
-        with:
-          name: build-version_linux_arm64
-      - uses: actions/download-artifact@v4
-        with:
-          name: build-version_linux_amd64
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ env.BUILD_VERSION }}
           files: |
-            build-version_linux_arm64
-            build-version_linux_amd64
+            artifacts/build-version_linux_arm64/build-version_linux_arm64
+            artifacts/build-version_linux_amd64/build-version_linux_amd64
+          make_latest: ${{ github.ref_name == 'main' && 'true' || 'false' }}
