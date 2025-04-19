@@ -61,7 +61,6 @@ jobs:
           path: "artifacts"
           pattern: build-version_*
           merge-multiple: true
-      - run: ls -R .
       - name: Generate Version
         id: generate-version
         run: |
@@ -73,8 +72,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ env.BUILD_VERSION }}
-          files: |
-            artifacts/*
+          files: artifacts/*
           make_latest: ${{ github.ref_name == 'main' && 'true' || 'false' }}
       # - name: Publish Action
       #   if: ${{ github.ref_name == 'main' }}
