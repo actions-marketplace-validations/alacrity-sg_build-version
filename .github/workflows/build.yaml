@@ -55,13 +55,14 @@ jobs:
           fetch-tags: true
       - uses: actions/download-artifact@v4
         with:
+          path: "artifacts"
           pattern: build-version_*
           merge_multiple: true
       - run: ls -R .
       - name: Generate Version
         id: generate-version
         run: |
-          ./build-version_linux_amd64 -repo-path=. -output-file=build-version.env
+          ./artifacts/build-version_linux_amd64 -repo-path=. -output-file=build-version.env
           cat build-version.env >> "$GITHUB_OUTPUT"
           cat build-version.env >> "$GITHUB_ENV"
       - name: Release
@@ -69,6 +70,6 @@ jobs:
         with:
           tag_name: v${{ env.BUILD_VERSION }}
           files: |
-            build-version_linux_arm64
-            build-version_linux_amd64
+            artifacts/build-version_linux_arm64
+            artifacts/build-version_linux_amd64
           make_latest: ${{ github.ref_name == 'main' && 'true' || 'false' }}
