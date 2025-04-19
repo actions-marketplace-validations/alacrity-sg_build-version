@@ -3,13 +3,13 @@ package git
 import (
 	"testing"
 
+	"github.com/alacrity-sg/build-version/src/bvtest"
 	"github.com/alacrity-sg/build-version/src/lib"
-	bv_test "github.com/alacrity-sg/build-version/test"
 	"github.com/go-git/go-git/v5"
 )
 
 func TestGetLatestReleaseTagSingle(t *testing.T) {
-	dir, r, _, commit := bv_test.SetupRepo("main", t)
+	dir, r, _, commit := bvtest.SetupRepo("main", t)
 	expectedTag := "v1.0.0"
 	_, err := r.CreateTag(expectedTag, commit.Hash, &git.CreateTagOptions{
 		Message: expectedTag,
@@ -23,7 +23,7 @@ func TestGetLatestReleaseTagSingle(t *testing.T) {
 }
 
 func TestGetLatestReleaseTagMultiple(t *testing.T) {
-	dir, r, _, commit := bv_test.SetupRepo("main", t)
+	dir, r, _, commit := bvtest.SetupRepo("main", t)
 	unexpectedTag := "v1.0.0"
 	_, err := r.CreateTag(unexpectedTag, commit.Hash, &git.CreateTagOptions{
 		Message: unexpectedTag,
@@ -42,7 +42,7 @@ func TestGetLatestReleaseTagMultiple(t *testing.T) {
 }
 
 func TestGetLatestReleaseTagMultipleWithRC(t *testing.T) {
-	dir, r, _, commit := bv_test.SetupRepo("main", t)
+	dir, r, _, commit := bvtest.SetupRepo("main", t)
 	tagOptions := &git.CreateTagOptions{
 		Message: "Commit",
 	}
@@ -61,7 +61,7 @@ func TestGetLatestReleaseTagMultipleWithRC(t *testing.T) {
 }
 
 func TestGetRCTagSingle(t *testing.T) {
-	dir, r, _, commit := bv_test.SetupRepo("main", t)
+	dir, r, _, commit := bvtest.SetupRepo("main", t)
 	tagOptions := &git.CreateTagOptions{
 		Message: "Commit",
 	}
@@ -76,7 +76,7 @@ func TestGetRCTagSingle(t *testing.T) {
 }
 
 func TestGetRCTagMultiple(t *testing.T) {
-	dir, r, _, commit := bv_test.SetupRepo("main", t)
+	dir, r, _, commit := bvtest.SetupRepo("main", t)
 	tagOptions := &git.CreateTagOptions{
 		Message: "Commit",
 	}
@@ -93,7 +93,7 @@ func TestGetRCTagMultiple(t *testing.T) {
 }
 
 func TestGetRCTagMultipleWithRelease(t *testing.T) {
-	dir, r, _, commit := bv_test.SetupRepo("main", t)
+	dir, r, _, commit := bvtest.SetupRepo("main", t)
 	tagOptions := &git.CreateTagOptions{
 		Message: "Commit",
 	}
