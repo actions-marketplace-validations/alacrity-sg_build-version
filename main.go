@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/alacrity-sg/build-version/src/github"
+	"os"
 
 	"github.com/alacrity-sg/build-version/src/lib"
 	"github.com/alacrity-sg/build-version/src/processor"
@@ -22,6 +24,20 @@ func main() {
 		IncrementType:  *incrementTypePtr,
 		OfflineMode:    *offlineModePtr,
 	}
+
+	_, githubEnv := os.LookupEnv("GITHUB_ACTIONS")
+	if input.OfflineMode {
+		fmt.Println("Offline mode is enabled. Please note that all external features such as communicating with Git services will be disabled")
+	} else {
+		if githubEnv {
+			repository := os.Getenv("GITHUB_REPOSITORY")
+			err := github.ValidatePermissions(repository, input.Token)
+			if err != nil {
+				fmt.Println("[GitHub] Error validating permissions:", err)
+				os.Exit(1)
+			}
+		}
+	}
 	version, err := input.ProcessSemver()
 	if err != nil {
 		panic(err)
@@ -29,9 +45,6 @@ func main() {
 	err = lib.WriteToFile(*version, input.OutputFilePath)
 	if err != nil {
 		panic(err)
-	}
-	if *offlineModePtr {
-		fmt.Println("Offline mode is enabled. Please note that all external features such as communicating with Git services will be disabled")
 	}
 	fmt.Printf("Successfully generated version. Generated result file is %s", *outputFilePtr)
 	fmt.Printf("Build Version for this run is %s", *version)

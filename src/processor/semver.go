@@ -25,8 +25,6 @@ type ProcessorInput struct {
 func (input *ProcessorInput) ProcessSemver() (*string, error) {
 	_, githubEnv := os.LookupEnv("GITHUB_ACTIONS")
 	if githubEnv {
-		// token := os.Getenv("GITHUB_TOKEN")
-		// repo := os.Getenv("GITHUB_REPOSITORY")
 		refName := os.Getenv("GITHUB_REF_NAME")
 		jobRunId := os.Getenv("GITHUB_RUN_ID")
 		if refName == "main" {
