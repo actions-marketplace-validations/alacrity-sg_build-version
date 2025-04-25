@@ -1,5 +1,8 @@
 name: Generate Build Version
 description: Generates unique build-version number for builds
+branding:
+  icon: bookmark
+  color: blue
 inputs:
   repo-path:
     description: Path to the repository
